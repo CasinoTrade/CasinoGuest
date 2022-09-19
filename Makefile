@@ -1,7 +1,7 @@
 
 GIT_COMMIT=`git rev-parse HEAD`
 BUILD_DATE=`date +%d-%m-%Y-%H:%M`
-VERSION?=0.0.0
+VERSION?=0.0.0-develop
 
 all: casino
 

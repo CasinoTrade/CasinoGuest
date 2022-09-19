@@ -8,9 +8,8 @@ WORKDIR /app
 COPY . .
 
 ARG version
-ENV VERSION ${version:-'0.0.0'}
+ENV VERSION ${version:-'0.0.0-develop'}
 RUN make casino
-# RUN mv casinoguest /casinoguest
 
 ## ----------------------------------------------------------------------------
 ## Deploy
