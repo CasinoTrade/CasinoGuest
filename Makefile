@@ -1,3 +1,4 @@
+# Set VERSION env variable in form x.y.z to provide version.
 
 GIT_COMMIT=`git rev-parse HEAD`
 BUILD_DATE=`date +%d-%m-%Y-%H:%M`

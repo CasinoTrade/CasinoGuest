@@ -18,7 +18,7 @@ RUN make casino
 FROM debian:11.5
 
 WORKDIR /opt/CasinoGuest
-COPY --from=build /app/dist/casinoguest .
+COPY --from=build /app/dist/* .
 
 RUN useradd nonroot --user-group --no-create-home
 RUN chown -R nonroot:nonroot /opt/CasinoGuest && chmod -R 755 /opt/CasinoGuest
