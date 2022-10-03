@@ -3,6 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+
+	"github.com/CasinoTrade/CasinoGuest/internal/log"
+	"github.com/CasinoTrade/CasinoGuest/internal/model/config"
+	"github.com/CasinoTrade/CasinoGuest/internal/server/rest"
 )
 
 var (
@@ -26,4 +30,7 @@ func main() {
 		return
 	}
 
+	logger := log.New(config.DefaultCfg().Logger)
+	s := rest.New(config.DefaultCfg().Server, logger)
+	s.Start()
 }

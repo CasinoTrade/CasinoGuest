@@ -4,7 +4,10 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/CasinoTrade/CasinoGuest/internal/model/config"
+	"github.com/CasinoTrade/CasinoGuest/internal/model/log"
 	model "github.com/CasinoTrade/CasinoGuest/internal/model/server"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -13,15 +16,31 @@ type CasinoREST struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
-	adress string
-	e      *echo.Echo
+	cfg config.Server
+	log log.Logger
+	e   *echo.Echo
 }
 
 func (s *CasinoREST) Start() {
 	e := echo.New()
 	s.e = e
+	logger := s.log.WithSource("rest-middleware")
+	lc := middleware.RequestLoggerConfig{
+		LogRemoteIP: true,
+		LogMethod:   true,
+		LogURIPath:  true,
 
-	e.Use(middleware.Logger())
+		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			logger.WithFields(
+				log.Field{"method", v.Method},
+				log.Field{"ip", v.RemoteIP},
+				log.Field{"path", v.URIPath},
+			).Info("Request handled")
+			return nil
+		},
+	}
+
+	e.Use(middleware.RequestLoggerWithConfig(lc))
 	e.Use(middleware.Recover())
 
 	e.GET("/", func(c echo.Context) error {
@@ -32,7 +51,7 @@ func (s *CasinoREST) Start() {
 		return c.JSON(http.StatusOK, struct{ Number int }{Number: 42})
 	})
 
-	e.Logger.Fatal(e.Start(s.adress))
+	e.Logger.Fatal(e.Start(s.cfg.Address))
 }
 
 func (s *CasinoREST) Stop() {
@@ -44,10 +63,11 @@ func (s *CasinoREST) Stop() {
 	s.e.Shutdown(context.Background())
 }
 
-func New(adress string) model.Casino {
+func New(cfg config.Server, log log.Logger) model.Casino {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &CasinoREST{
-		adress: adress,
+		cfg:    cfg,
+		log:    log,
 		ctx:    ctx,
 		cancel: cancel,
 	}
