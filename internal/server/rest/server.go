@@ -23,20 +23,33 @@ type CasinoREST struct {
 
 func (s *CasinoREST) Start() {
 	e := echo.New()
+	e.HideBanner = true
 	s.e = e
+
 	logger := s.log.WithSource("rest-middleware")
 	lc := middleware.RequestLoggerConfig{
 		LogRemoteIP: true,
 		LogMethod:   true,
 		LogURIPath:  true,
+		LogError:    true,
 
 		LogValuesFunc: func(c echo.Context, v middleware.RequestLoggerValues) error {
+			e := v.Error
+			if e == nil {
+				logger.WithFields(
+					log.Field{"method", v.Method},
+					log.Field{"ip", v.RemoteIP},
+					log.Field{"path", v.URIPath},
+				).Info("Request handled")
+				return nil
+			}
 			logger.WithFields(
 				log.Field{"method", v.Method},
 				log.Field{"ip", v.RemoteIP},
 				log.Field{"path", v.URIPath},
-			).Info("Request handled")
-			return nil
+				log.Field{"err", v.Error.Error()},
+			).Warn("Request failed")
+			return e
 		},
 	}
 

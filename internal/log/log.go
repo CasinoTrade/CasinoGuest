@@ -1,6 +1,8 @@
 package log
 
 import (
+	"time"
+
 	"github.com/CasinoTrade/CasinoGuest/internal/model/config"
 	model "github.com/CasinoTrade/CasinoGuest/internal/model/log"
 
@@ -55,7 +57,7 @@ func (l *Logger) Error(msg string) {
 func (l *Logger) WithFields(fields ...model.Field) model.Logger {
 	lctx := l.logger.With()
 	for _, field := range fields {
-		lctx.Str(field.Key, field.Val)
+		lctx = lctx.Str(field.Key, field.Val)
 	}
 	return &Logger{
 		logger: lctx.Logger(),
@@ -76,6 +78,7 @@ func (l *Logger) WithSource(val string) model.Logger {
 
 func New(cfg config.Logger) model.Logger {
 	w := zerolog.NewConsoleWriter()
+	w.TimeFormat = time.RFC3339
 	l := zerolog.New(w).Level(level(cfg.Debug)).With().Timestamp().Logger()
 	return &Logger{
 		logger: l,
