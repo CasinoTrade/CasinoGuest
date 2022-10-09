@@ -2,6 +2,7 @@ package rest
 
 import (
 	"context"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/CasinoTrade/CasinoGuest/internal/model/config"
@@ -64,7 +65,19 @@ func (s *CasinoREST) Start() {
 		return c.JSON(http.StatusOK, struct{ Number int }{Number: 42})
 	})
 
-	e.Logger.Fatal(e.Start(s.cfg.Address))
+	// TODO: Check, we still allowed to log evryting needed or provide logger for echo
+	e.Logger.SetOutput(ioutil.Discard)
+
+	s.run()
+}
+
+func (s *CasinoREST) run() {
+	log := s.log.WithSource("server-runner")
+	log.Infof("Starting server with config: %s", s.cfg)
+	if err := s.e.Start(s.cfg.Address); err != http.ErrServerClosed {
+		log.Fatalf("Server failed: %v", err)
+	}
+	log.Info("Server closed")
 }
 
 func (s *CasinoREST) Stop() {

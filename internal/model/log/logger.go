@@ -10,6 +10,8 @@ type Logger interface {
 	Warnf(format string, arg ...interface{})
 	// Errorf logs formated message. Consider using Error in perf-critical places.
 	Errorf(format string, arg ...interface{})
+	// Fatalf logs formated message. Consider using Fatal in perf-critical places.
+	Fatalf(format string, arg ...interface{})
 
 	// Debug logs msg with debug level.
 	Debug(msg string)
@@ -19,6 +21,8 @@ type Logger interface {
 	Warn(msg string)
 	// Error logs msg with error level.
 	Error(msg string)
+	// Error logs msg with fatal level and calls os.Exit.
+	Fatal(msg string)
 
 	// WithFields adds multiple log message fields.
 	WithFields(fields ...Field) Logger

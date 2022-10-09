@@ -33,6 +33,11 @@ func (l *Logger) Errorf(format string, arg ...interface{}) {
 	l.logger.Error().Msgf(format, arg...)
 }
 
+// Fatalf logs formated message. Consider using Fatal in perf-critical places.
+func (l *Logger) Fatalf(format string, arg ...interface{}) {
+	l.logger.Fatal().Msgf(format, arg...)
+}
+
 // Debug logs msg with debug level.
 func (l *Logger) Debug(msg string) {
 	l.logger.Debug().Msg(msg)
@@ -51,6 +56,11 @@ func (l *Logger) Warn(msg string) {
 // Error logs msg with error level.
 func (l *Logger) Error(msg string) {
 	l.logger.Error().Msg(msg)
+}
+
+// Error logs msg with fatal level and calls os.Exit.
+func (l *Logger) Fatal(msg string) {
+	l.logger.Fatal().Msg(msg)
 }
 
 // WithFields adds multiple log message fields.
