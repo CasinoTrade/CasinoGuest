@@ -6,6 +6,7 @@ import (
 
 	"github.com/CasinoTrade/CasinoGuest/internal/log"
 	"github.com/CasinoTrade/CasinoGuest/internal/model/config"
+	"github.com/CasinoTrade/CasinoGuest/internal/server"
 	"github.com/CasinoTrade/CasinoGuest/internal/server/rest"
 )
 
@@ -30,7 +31,12 @@ func main() {
 		return
 	}
 
+	// init
 	logger := log.New(config.DefaultCfg().Logger)
-	s := rest.New(config.DefaultCfg().Server, logger)
+	casino := server.New(logger.WithSource("base-server"))
+	s := rest.New(config.DefaultCfg().Server, logger.WithSource("rest-server"), casino)
+
+	// start
+	casino.Start()
 	s.Start()
 }
