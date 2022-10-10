@@ -7,7 +7,7 @@ import (
 	"github.com/CasinoTrade/CasinoGuest/internal/log"
 	"github.com/CasinoTrade/CasinoGuest/internal/model/config"
 	"github.com/CasinoTrade/CasinoGuest/internal/server"
-	"github.com/CasinoTrade/CasinoGuest/internal/server/rest"
+	rest "github.com/CasinoTrade/CasinoGuest/internal/server/restFaber"
 )
 
 var (

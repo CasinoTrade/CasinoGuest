@@ -9,7 +9,7 @@ import (
 	"github.com/CasinoTrade/CasinoGuest/internal/model/log"
 )
 
-const pingsBufferSize = 10
+const pingsBufferSize = 5
 
 // TODO: Create model
 type Casino struct {

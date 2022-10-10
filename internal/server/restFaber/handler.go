@@ -2,10 +2,9 @@ package rest
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/CasinoTrade/CasinoGuest/internal/server"
-	"github.com/labstack/echo/v4"
+	"github.com/gofiber/fiber/v2"
 )
 
 type handler struct {
@@ -18,9 +17,9 @@ func newHandler(base *server.Casino) *handler {
 	}
 }
 
-func (h *handler) Ping(c echo.Context) error {
+func (h *handler) Ping(c *fiber.Ctx) error {
 	res := h.base.Ping(context.TODO())
-	return c.JSON(http.StatusOK, echo.Map{
+	return c.JSON(fiber.Map{
 		"Number": res,
 	})
 }
