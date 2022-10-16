@@ -11,7 +11,6 @@ import (
 
 const pingsBufferSize = 5
 
-// TODO: Create model
 type Casino struct {
 	log log.Logger
 

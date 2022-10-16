@@ -3,22 +3,19 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
 
 	"github.com/CasinoTrade/CasinoGuest/internal/log"
 	"github.com/CasinoTrade/CasinoGuest/internal/model/config"
 	"github.com/CasinoTrade/CasinoGuest/internal/server"
-	rest "github.com/CasinoTrade/CasinoGuest/internal/server/restFaber"
+	"github.com/CasinoTrade/CasinoGuest/internal/server/rest"
 )
 
 var (
 	version = "0.0.0"
 	commit  = "none"
 	date    = "none"
-)
-
-const (
-	httpPort = "8080"
-	baseURL  = ":" + httpPort
 )
 
 func main() {
@@ -39,4 +36,13 @@ func main() {
 	// start
 	casino.Start()
 	s.Start()
+
+	// shutdown handling
+	ch := make(chan os.Signal, 10)
+	signal.Notify(ch, os.Interrupt)
+
+	<-ch
+	logger.Info("Handling interrupt")
+	s.Stop()
+	logger.Info("Done")
 }
