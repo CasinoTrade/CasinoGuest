@@ -30,6 +30,9 @@ func main() {
 
 	// init
 	logger := log.New(config.DefaultCfg().Logger)
+	logger.Infof("Version: %s, build data: %s, build commit: %s", version, date, commit)
+	logger.Infof("Config: %#v", config.DefaultCfg())
+
 	casino := server.New(logger.WithSource("base-server"))
 	s := rest.New(config.DefaultCfg().Server, logger.WithSource("rest-server"), casino)
 

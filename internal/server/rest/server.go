@@ -2,12 +2,10 @@ package rest
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/CasinoTrade/CasinoGuest/internal/model/config"
 	"github.com/CasinoTrade/CasinoGuest/internal/model/log"
 	model "github.com/CasinoTrade/CasinoGuest/internal/model/server"
-	"github.com/CasinoTrade/CasinoGuest/internal/server"
 
 	"github.com/gofiber/fiber/v2"
 	fibrecover "github.com/gofiber/fiber/v2/middleware/recover"
@@ -21,7 +19,18 @@ type CasinoREST struct {
 	log log.Logger
 	e   *fiber.App
 
-	base *server.Casino
+	base model.Base
+}
+
+func New(cfg config.Server, log log.Logger, base model.Base) model.Casino {
+	ctx, cancel := context.WithCancel(context.Background())
+	return &CasinoREST{
+		cfg:    cfg,
+		log:    log,
+		ctx:    ctx,
+		cancel: cancel,
+		base:   base,
+	}
 }
 
 func (s *CasinoREST) Start() {
@@ -51,17 +60,8 @@ func (s *CasinoREST) Start() {
 	go s.run()
 }
 
-func (s *CasinoREST) run() {
-	log := s.log.WithSource("server-runner")
-	log.Infof("Starting server with config: %s", s.cfg)
-	if err := s.e.Listen(s.cfg.Address); err != http.ErrServerClosed {
-		log.Fatalf("Server failed: %v", err)
-	}
-	log.Info("Server closed")
-}
-
 func (s *CasinoREST) Stop() {
-	s.log.Info("Shutdown server in progress")
+	s.log.Info("Server shutdown in progress")
 	if err := s.e.Shutdown(); err != nil {
 		s.log.Fatalf("Shutdown error: %v", err)
 	}
@@ -69,15 +69,14 @@ func (s *CasinoREST) Stop() {
 	if s.cancel != nil {
 		s.cancel()
 	}
+	s.log.Debug("Sever shutdown done")
 }
 
-func New(cfg config.Server, log log.Logger, base *server.Casino) model.Casino {
-	ctx, cancel := context.WithCancel(context.Background())
-	return &CasinoREST{
-		cfg:    cfg,
-		log:    log,
-		ctx:    ctx,
-		cancel: cancel,
-		base:   base,
+func (s *CasinoREST) run() {
+	log := s.log.WithSource("rest-runner")
+	log.Debugf("Starting server with config: %#v", s.cfg)
+	if err := s.e.Listen(s.cfg.Address); err != nil {
+		log.Fatalf("Server failed: %v", err)
 	}
+	log.Info("Server closed")
 }

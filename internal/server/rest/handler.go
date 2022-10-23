@@ -1,15 +1,15 @@
 package rest
 
 import (
-	"github.com/CasinoTrade/CasinoGuest/internal/server"
+	model "github.com/CasinoTrade/CasinoGuest/internal/model/server"
 	"github.com/gofiber/fiber/v2"
 )
 
 type handler struct {
-	base *server.Casino
+	base model.Base
 }
 
-func newHandler(base *server.Casino) *handler {
+func newHandler(base model.Base) *handler {
 	return &handler{
 		base: base,
 	}

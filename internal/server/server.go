@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/CasinoTrade/CasinoGuest/internal/model/log"
+	model "github.com/CasinoTrade/CasinoGuest/internal/model/server"
 )
 
 const pingsBufferSize = 5
@@ -22,7 +23,7 @@ type Casino struct {
 	pings chan int
 }
 
-func New(logger log.Logger) *Casino {
+func New(logger log.Logger) model.Base {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Casino{
 		r:      rand.New(rand.NewSource(time.Now().Unix())),
